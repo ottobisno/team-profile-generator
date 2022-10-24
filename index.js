@@ -1,6 +1,8 @@
 const fs = require('fs');
 const inquirer = require('inquirer');
-
+const Manager = require('./lib/Manager');
+const Engineer = require('./lib/Engineer');
+const Intern = require('./lib/Intern');
 
 const questionsInitial = [
     {
@@ -90,7 +92,7 @@ const questionsIntern = [
 ]
 
 function writeToFile() {
-    const HTMLContent = generateHTML(manager, engArr, internArr);
+    const HTMLContent = generateHTML(manager, employeesArr);
 
     fs.writeFile('tester.html', HTMLContent, (err) =>
     err ? console.log(err) : console.log('Successfully created the html file.'))
@@ -105,21 +107,13 @@ function Init() {
 
 Init();
 
-const Employee = require('./lib/Employee');
-const Manager = require('./lib/Manager');
-const Engineer = require('./lib/Engineer');
-const Intern = require('./lib/Intern');
-
 var manager;
-const engArr = [];
-const internArr = [];
+const employeesArr = [];
 
 function defineManager(response) {
     manager = new Manager(response.name, response.id, response.email, response.officeNumber);
     return response.employee_choice;
 }
-
-
 
 function generateTeam(choice) { 
 
@@ -142,16 +136,16 @@ function generateTeam(choice) {
 }
 
 function engPush(response) {
-    engArr.push(new Engineer(response.name, response.id, response.email, response.github))
+    employeesArr.push(new Engineer(response.name, response.id, response.email, response.github))
     return response.employee_choice;
 }
 
 function internPush(response) {
-    internArr.push(new Intern(response.name, response.id, response.email, response.school))
+    employeesArr.push(new Intern(response.name, response.id, response.email, response.school))
     return response.employee_choice;
 }
 
-function generateHTML(manager, engArr, internArr) {
+function generateHTML(manager, employeesArr) {
     return `<!DOCTYPE html>
     <html lang="en">
     <head>
@@ -179,83 +173,44 @@ function generateHTML(manager, engArr, internArr) {
                         </div>
                     </div>
                 </div>
-                ${engHTML(engArr)}
-                ${internHTML(internArr)}
+                ${employeesHTML(employeesArr)}
             </div>
         </div>
     </body>
     </html>`
 }
 
-// function eng(value) {
-//     return `<div class="col-12 col-md-6 col-xl-4">
-//             <div class="card mx-auto mt-3 shadow">
-//                 <div class="card-body">
-//                 <h5 class="card-title fw-bold">${value.getName()}</h5>
-//                 <h6 class="card-subtitle mb-2 text-muted">${value.getRole()}</h6>
-//                 <p class="card-text">ID: ${value.getId()}</p>
-//                 <p class="card-text">Email: ${value.getEmail()}</p>
-//                 <p class="card-text">GitHub: ${value.getGithub()}</p>
-//                 </div>
-//             </div>
-//         </div>`
-// }
-
-
-
-
-function engHTML(engArr) {
+function employeesHTML(employeesArr) {
     let htmlArr = [];
 
-    if (engArr.length > 0) {
-        for (let i = 0; i < engArr.length; i++) {
+    if (employeesArr.length > 0) {
+        for (let i = 0; i < employeesArr.length; i++) {
+            let engOrIntern = '';
+
+            if (employeesArr[i].getRole() === 'Engineer') {
+                engOrIntern = `GitHub: ${employeesArr[i].getGithub()}`;
+            } else {
+                engOrIntern = `School: ${employeesArr[i].getSchool()}`;
+            }
+
             let html = `
                 <div class="col-12 col-md-6 col-xl-4">
                     <div class="card mx-auto mt-3 shadow">
                         <div class="card-body">
-                        <h5 class="card-title fw-bold">${engArr[i].getName()}</h5>
-                        <h6 class="card-subtitle mb-2 text-muted">${engArr[i].getRole()}</h6>
-                        <p class="card-text">ID: ${engArr[i].getId()}</p>
-                        <p class="card-text">Email: ${engArr[i].getEmail()}</p>
-                        <p class="card-text">GitHub: ${engArr[i].getGithub()}</p>
+                        <h5 class="card-title fw-bold">${employeesArr[i].getName()}</h5>
+                        <h6 class="card-subtitle mb-2 text-muted">${employeesArr[i].getRole()}</h6>
+                        <p class="card-text">ID: ${employeesArr[i].getId()}</p>
+                        <p class="card-text">Email: ${employeesArr[i].getEmail()}</p>
+                        <p class="card-text">${engOrIntern}</p>
                         </div>
                     </div>
                 </div>
                 `
             htmlArr.push(html);
         }
-        let htmlEng = htmlArr.join('');
-        return htmlEng;
+        let htmlEmployees = htmlArr.join('');
+        return htmlEmployees;
         
-    } else {
-        return '';
-    }
-}
-
-function internHTML(internArr) {
-    let htmlArr = [];
-
-    if (internArr.length > 0) {
-        for (let i = 0; i < internArr.length; i++) {
-            let html = `
-                <div class="col-12 col-md-6 col-xl-4">
-                    <div class="card mx-auto mt-3 shadow">
-                        <div class="card-body">
-                        <h5 class="card-title fw-bold">${internArr[i].getName()}</h5>
-                        <h6 class="card-subtitle mb-2 text-muted">${internArr[i].getRole()}</h6>
-                        <p class="card-text">ID: ${internArr[i].getId()}</p>
-                        <p class="card-text">Email: ${internArr[i].getEmail()}</p>
-                        <p class="card-text">School: ${internArr[i].getSchool()}</p>
-                        </div>
-                    </div>
-                </div>
-                `
-            
-            htmlArr.push(html);
-        }
-        let htmlIntern = htmlArr.join('');
-        return htmlIntern;
-
     } else {
         return '';
     }
