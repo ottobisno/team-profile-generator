@@ -94,7 +94,7 @@ const questionsIntern = [
 function writeToFile() {
     const HTMLContent = generateHTML(manager, employeesArr);
 
-    fs.writeFile('tester.html', HTMLContent, (err) =>
+    fs.writeFile('./dist/index.html', HTMLContent, (err) =>
     err ? console.log(err) : console.log('Successfully created the html file.'))
 }
 
@@ -117,7 +117,6 @@ function defineManager(response) {
 
 function generateTeam(choice) { 
 
-    //change this back to below if statement (will prob need to change these anyways though)
     if (choice === 'Add Engineer') {
         inquirer
             .prompt(questionsEng)
@@ -168,7 +167,7 @@ function generateHTML(manager, employeesArr) {
                         <h5 class="card-title fw-bold">${manager.getName()}</h5>
                         <h6 class="card-subtitle mb-2 text-muted">${manager.getRole()}</h6>
                         <p class="card-text">ID: ${manager.getId()}</p>
-                        <p class="card-text">Email: ${manager.getEmail()}</p>
+                        <p class="card-text">Email: <a href="mailto:${manager.getEmail()}">${manager.getEmail()}</a></p>
                         <p class="card-text">Office Number: ${manager.getOfficeNumber()}</p>
                         </div>
                     </div>
@@ -188,7 +187,7 @@ function employeesHTML(employeesArr) {
             let engOrIntern = '';
 
             if (employeesArr[i].getRole() === 'Engineer') {
-                engOrIntern = `GitHub: ${employeesArr[i].getGithub()}`;
+                engOrIntern = `GitHub: <a href="https://github.com/${employeesArr[i].getGithub()}">${employeesArr[i].getGithub()}</a>`;
             } else {
                 engOrIntern = `School: ${employeesArr[i].getSchool()}`;
             }
@@ -200,7 +199,7 @@ function employeesHTML(employeesArr) {
                         <h5 class="card-title fw-bold">${employeesArr[i].getName()}</h5>
                         <h6 class="card-subtitle mb-2 text-muted">${employeesArr[i].getRole()}</h6>
                         <p class="card-text">ID: ${employeesArr[i].getId()}</p>
-                        <p class="card-text">Email: ${employeesArr[i].getEmail()}</p>
+                        <p class="card-text">Email: <a href="mailto:${employeesArr[i].getEmail()}">${employeesArr[i].getEmail()}</a></p>
                         <p class="card-text">${engOrIntern}</p>
                         </div>
                     </div>
