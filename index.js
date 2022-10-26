@@ -1,9 +1,11 @@
+// Importing necessary modules and classes
 const fs = require('fs');
 const inquirer = require('inquirer');
 const Manager = require('./lib/Manager');
 const Engineer = require('./lib/Engineer');
 const Intern = require('./lib/Intern');
 
+// Questions to be asked initially, before choosing additional employees
 const questionsInitial = [
     {
         name: 'name',
@@ -33,6 +35,7 @@ const questionsInitial = [
     }
 ]
 
+// Questions to be asked if an Engineer is to be added to the team
 const questionsEng = [
     {
         name: 'name',
@@ -62,6 +65,7 @@ const questionsEng = [
     }
 ]
 
+// Questions to be asked if an Intern is to be added to the team
 const questionsIntern = [
     {
         name: 'name',
@@ -91,30 +95,17 @@ const questionsIntern = [
     }
 ]
 
-function writeToFile() {
-    const HTMLContent = generateHTML(manager, employeesArr);
-
-    fs.writeFile('./dist/index.html', HTMLContent, (err) =>
-    err ? console.log(err) : console.log('Successfully created the html file.'))
-}
-
-function Init() {
-    inquirer
-        .prompt(questionsInitial)
-        .then(defineManager)
-        .then(generateTeam)
-}
-
-Init();
-
+// Defining a variable for the manager of the team and an array for each employee added
 var manager;
 const employeesArr = [];
 
+// Creating a class for the manager once responses are received initially
 function defineManager(response) {
     manager = new Manager(response.name, response.id, response.email, response.officeNumber);
     return response.employee_choice;
 }
 
+// Allows the user to keep adding Engineers or Interns to the team until the team is complete
 function generateTeam(choice) { 
 
     if (choice === 'Add Engineer') {
@@ -134,16 +125,19 @@ function generateTeam(choice) {
     }
 }
 
+// Adds any Engineers created to the employees array
 function engPush(response) {
     employeesArr.push(new Engineer(response.name, response.id, response.email, response.github))
     return response.employee_choice;
 }
 
+// Adds any Interns created to the employees array
 function internPush(response) {
     employeesArr.push(new Intern(response.name, response.id, response.email, response.school))
     return response.employee_choice;
 }
 
+// Creates the HTML file based on user input, styled with bootstrap
 function generateHTML(manager, employeesArr) {
     return `<!DOCTYPE html>
     <html lang="en">
@@ -179,6 +173,7 @@ function generateHTML(manager, employeesArr) {
     </html>`
 }
 
+// Checks the employees array and creates a card in the html for each employee specified
 function employeesHTML(employeesArr) {
     let htmlArr = [];
 
@@ -214,3 +209,22 @@ function employeesHTML(employeesArr) {
         return '';
     }
 }
+
+// Function to generate the HTML file
+function writeToFile() {
+    const HTMLContent = generateHTML(manager, employeesArr);
+
+    fs.writeFile('./dist/index.html', HTMLContent, (err) =>
+    err ? console.log(err) : console.log('Successfully created the html file.'))
+}
+
+// Function to initialize the app with inquirer
+function Init() {
+    inquirer
+        .prompt(questionsInitial)
+        .then(defineManager)
+        .then(generateTeam)
+}
+
+// Initializing the app
+Init();
